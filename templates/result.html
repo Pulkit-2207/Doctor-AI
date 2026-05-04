@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction Result - Doctor AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14pt;
+            text-align: center;
+            margin-top: 100px;
+            color: #333333;
+        }
+        .container {
+            margin: auto;
+            width: 60%;
+            padding: 20px;
+        }
+        .btn {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2E86C1;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Diagnosis Completed</h1>
+        <p><strong>Predicted Disease:</strong> {{ prediction }}</p>
+        
+        <p>Download your detailed medical report below:</p>
+
+        <a href="/download_pdf" class="btn">Download PDF Report</a><br><br>
+        <a href="/" class="btn">Return Home</a>
+        
+        <p style="margin-top: 30px; font-size: 10pt;">Disclaimer: This prediction is AI-based. Consult a doctor for final diagnosis.</p>
+    </div>
+
+</body>
+</html>

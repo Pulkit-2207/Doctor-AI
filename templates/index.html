@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI-powered health diagnosis platform that predicts diseases based on symptoms and provides recommendations">
+  <title>Health Care Center - AI-Powered Diagnosis</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon1-32x32.png') }}" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href=" https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js" defer></script>
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #10b981;
+      --secondary-dark: #059669;
+      --accent: #f59e0b;
+      --accent-dark: #d97706;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --text-light: #111827;
+      --text-dark: #f3f4f6;
+      --bg-light: #f9fafb;
+      --bg-dark: #111827;
+      --bg-luxury: linear-gradient(135deg, #232526 0%, #414345 100%);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    body.dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    body.luxury-mode {
+      background: var(--bg-luxury);
+      color: #ffd700;
+    }
+
+    #background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    #background-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      transition: background-color 0.3s ease;
+    }
+
+    .bg-light-overlay {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .bg-dark-overlay {
+      background: rgba(17, 24, 39, 0.9);
+    }
+
+    .bg-luxury-overlay {
+      background: rgba(35, 37, 38, 0.9);
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .modal {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-accent {
+      background-color: var(--accent);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-accent:hover {
+      background-color: var(--accent-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger-dark);
+      transform: translateY(-2px);
+    }
+
+    .hero-title {
+      background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .theme-toggle .btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 0;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+  <div id="background-animation">
+    <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_5ngs2ksb.json" background="transparent" speed="1" style="width: 100vw; height: 100vh;" loop autoplay></lottie-player>
+  </div>
+  <div id="background-overlay" class="bg-light-overlay"></div>
+
+  <!-- Navigation -->
+  <nav class="bg-blue-700 text-white shadow-md dark:bg-gray-800">
+    <div class="container mx-auto flex items-center justify-between px-4 py-3">
+      <a href="/" class="flex items-center space-x-3 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded">
+        <img src="/static/medical-icon.jpg" alt="Health Care Center Logo" class="w-10 h-10 rounded-full" onerror="this.src='https://via.placeholder.com/40?text=HC'">
+        <span class="font-bold text-xl">Health Care Center</span>
+      </a>
+      
+      <ul class="hidden md:flex space-x-6 font-medium">
+        <li><a href="/" class="nav-link hover:text-yellow-300">🏠 Home</a></li>
+        <li><a href="/about" class="nav-link hover:text-yellow-300">📖 About</a></li>
+        <li><a href="/blog" class="nav-link hover:text-yellow-300">📝 Blog</a></li>
+        <li><a href="/contact" class="nav-link hover:text-yellow-300">📞 Contact</a></li>
+        <li><a href="/developer" class="nav-link hover:text-yellow-300">👨‍💻 Developer</a></li>
+      </ul>
+      
+      <div class="flex items-center space-x-4">
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" class="text-xl focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-full p-2" title="Toggle dark mode">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button id="mobile-menu-button" class="md:hidden focus:outline-none focus:ring-2 focus:ring-yellow-300 p-2" aria-label="Toggle menu">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div id="mobile-menu" class="hidden bg-blue-600 dark:bg-gray-700 md:hidden">
+      <ul class="flex flex-col space-y-2 p-4 font-medium">
+        <li><a href="/" class="block nav-link hover:text-yellow-300 py-2">🏠 Home</a></li>
+        <li><a href="/about" class="block nav-link hover:text-yellow-300 py-2">📖 About</a></li>
+        <li><a href="/blog" class="block nav-link hover:text-yellow-300 py-2">📝 Blog</a></li>
+        <li><a href="/contact" class="block nav-link hover:text-yellow-300 py-2">📞 Contact</a></li>
+        <li><a href="/developer" class="block nav-link hover:text-yellow-300 py-2">👨‍💻 Developer</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="text-center py-16 px-4 max-w-4xl mx-auto">
+      <h1 class="hero-title text-5xl md:text-6xl font-extrabold mb-4">
+        Health Care Center
+      </h1>
+      <p class="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8">AI-powered symptom analysis and disease prediction</p>
+      
+      <div class="flex justify-center gap-4">
+        <a href="#diagnosis-form" class="btn-primary text-white font-bold py-3 px-8 rounded-full shadow-lg">
+          Get Started
+        </a>
+        <a href="/blog" class="btn-secondary text-white font-bold py-3 px-8 rounded-full shadow-lg">
+          Learn More
+        </a>
+      </div>
+    </section>
+
+    <!-- Diagnosis Form Section -->
+    <section id="diagnosis-form" class="max-w-xl mx-auto bg-white bg-opacity-90 dark:bg-gray-800 dark:bg-opacity-90 rounded-3xl shadow-lg p-8 mb-16 animate-fadeIn">
+      <form action="/predict" method="POST" class="space-y-6">
+        <div>
+          <label for="symptoms" class="block text-green-600 font-bold text-lg mb-2 dark:text-green-400">
+            Enter Your Symptoms
+          </label>
+          <input
+            list="symptomList"
+            id="symptoms"
+            name="symptoms"
+            placeholder="e.g. fever, headache, cough"
+            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 transition"
+            required
+            aria-required="true"
+          />
+          <datalist id="symptomList">
+            <option value="fever">
+            <option value="headache">
+            <option value="nausea">
+            <option value="fatigue">
+            <option value="cough">
+            <option value="sore throat">
+            <option value="body aches">
+            <option value="shortness of breath">
+            <option value="chest pain">
+            <option value="dizziness">
+          </datalist>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Separate multiple symptoms with commas (e.g., headache, nausea, vomiting)
+          </p>
+        </div>
+
+        <button
+          type="button"
+          id="startSpeechRecognition"
+          class="w-full py-3 rounded-full border border-gray-400 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center justify-center gap-2"
+          aria-label="Start voice input"
+        >
+          <i class="fas fa-microphone"></i> Voice Input
+        </button>
+
+        <div id="transcription" class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg min-h-[3rem] text-gray-700 dark:text-gray-300"></div>
+        <div id="recognitionError" class="text-red-500 text-sm hidden">Voice recognition not supported or permission denied</div>
+
+        <button
+          type="submit"
+          class="w-full btn-primary text-white font-bold py-3 rounded-full shadow-lg transition"
+        >
+          <i class="fas fa-search mr-2"></i> Predict Disease
+        </button>
+      </form>
+
+      {% if predicted_disease %}
+      <div class="mt-8 text-center space-y-4 animate-fadeIn">
+        <h2 class="text-2xl font-bold text-green-700 dark:text-green-400">Predicted Disease: {{ predicted_disease }}</h2>
+
+          <!-- new changes -->
+           <p class="text-gray-600 dark:text-gray-300">
+            Confidence: {{ '%.2f' % (confidence * 100) }}%
+              </p>
+
+        <div class="flex flex-wrap justify-center gap-3 mt-4">
+          <button
+            class="btn-accent text-white font-semibold py-2 px-4 rounded-full shadow-md transition"
+            onclick="toggleModal('descriptionModal')"
+            type="button"
+            aria-label="View disease description"
+          >
+            <i class="fas fa-info-circle mr-1"></i> Description
+          </button>
+          <button
+            class="btn-primary text-white font-semibold py-2 px-4 rounded-full shadow-md transition"
+            onclick="toggleModal('precautionModal')"
+            type="button"
+            aria-label="View precautions"
+          >
+            <i class="fas fa-shield-alt mr-1"></i> Precautions
+          </button>
+          <button
+            class="btn-secondary text-white font-semibold py-2 px-4 rounded-full shadow-md transition"
+            onclick="toggleModal('medicationsModal')"
+            type="button"
+            aria-label="View medications"
+          >
+            <i class="fas fa-pills mr-1"></i> Medications
+          </button>
+          <button
+            class="btn-danger text-white font-semibold py-2 px-4 rounded-full shadow-md transition"
+            onclick="toggleModal('workoutsModal')"
+            type="button"
+            aria-label="View workout recommendations"
+          >
+            <i class="fas fa-running mr-1"></i> Workouts
+          </button>
+          <button
+            class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-full shadow-md transition"
+            onclick="toggleModal('dietModal')"
+            type="button"
+            aria-label="View diet suggestions"
+          >
+            <i class="fas fa-utensils mr-1"></i> Diet
+          </button>
+
+          <button
+  class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-full shadow-md transition"
+  onclick="toggleModal('shapModal')"
+  type="button"
+  aria-label="View SHAP explanation"
+>
+  <i class="fas fa-chart-bar mr-1"></i> SHAP
+</button>
+
+        </div>
+
+        <form action="/download_pdf" method="GET" class="mt-6">
+          <input type="hidden" name="symptoms" value="{{ request.form['symptoms'] if request.form and request.form.get('symptoms') else '' }}" />
+          <button
+            type="submit"
+            class="btn-accent text-white font-semibold py-2 px-6 rounded-full shadow-md transition"
+          >
+            <i class="fas fa-file-pdf mr-1"></i> Download PDF Report
+          </button>
+        </form>
+
+        <div class="mt-6">
+          <a href="/chatbot" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline">
+            <i class="fas fa-comment-medical mr-2"></i> Chat with our AI Doctor
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <div id="descriptionModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" aria-hidden="true">
+    <div class="modal-content bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full p-6 relative max-h-[80vh] overflow-y-auto">
+      <button
+        class="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none"
+        onclick="toggleModal('descriptionModal')"
+        aria-label="Close description modal"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Description</h3>
+      <div class="text-gray-800 dark:text-gray-300">
+        {{ dis_des if dis_des else "No description available." }}
+      </div>
+    </div>
+  </div>
+
+  <div id="precautionModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" aria-hidden="true">
+    <div class="modal-content bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full p-6 relative max-h-[80vh] overflow-y-auto">
+      <button
+        class="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none"
+        onclick="toggleModal('precautionModal')"
+        aria-label="Close precaution modal"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Precautions</h3>
+      <ul class="list-disc list-inside text-gray-800 dark:text-gray-300 space-y-2">
+        {% if my_precautions %}
+          {% for precaution in my_precautions %}
+            <li>{{ precaution }}</li>
+          {% endfor %}
+        {% else %}
+          <li>No precautions available.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <div id="medicationsModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" aria-hidden="true">
+    <div class="modal-content bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full p-6 relative max-h-[80vh] overflow-y-auto">
+      <button
+        class="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none"
+        onclick="toggleModal('medicationsModal')"
+        aria-label="Close medications modal"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Medications</h3>
+      <ul class="list-disc list-inside text-gray-800 dark:text-gray-300 space-y-2">
+        {% if medications %}
+          {% for med in medications %}
+            <li>{{ med }}</li>
+          {% endfor %}
+        {% else %}
+          <li>No medications suggested.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <div id="workoutsModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" aria-hidden="true">
+    <div class="modal-content bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full p-6 relative max-h-[80vh] overflow-y-auto">
+      <button
+        class="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none"
+        onclick="toggleModal('workoutsModal')"
+        aria-label="Close workouts modal"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Workouts</h3>
+      <ul class="list-disc list-inside text-gray-800 dark:text-gray-300 space-y-2">
+        {% if workout %}
+          {% for exercise in workout %}
+            <li>{{ exercise }}</li>
+          {% endfor %}
+        {% else %}
+          <li>No workout recommendations available.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <div id="dietModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" aria-hidden="true">
+    <div class="modal-content bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full p-6 relative max-h-[80vh] overflow-y-auto">
+      <button
+        class="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none"
+        onclick="toggleModal('dietModal')"
+        aria-label="Close diet modal"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Diet Suggestions</h3>
+      <ul class="list-disc list-inside text-gray-800 dark:text-gray-300 space-y-2">
+        {% if my_diet %}
+          {% for diet in my_diet %}
+            <li>{{ diet }}</li>
+          {% endfor %}
+        {% else %}
+          <li>No diet recommendations available.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- added shap modal -->
+  <div id="shapModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" aria-hidden="true">
+  <div class="modal-content bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
+    <button
+      class="absolute top-3 right-3 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none"
+      onclick="toggleModal('shapModal')"
+      aria-label="Close SHAP modal"
+    >
+      <i class="fas fa-times text-xl"></i>
+    </button>
+    <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">SHAP Explanation</h3>
+    {% if shap_image %}
+      <img src="{{ shap_image }}" alt="SHAP explanation plot" class="rounded-lg shadow-md mb-4"/>
+    {% endif %}
+    {% if shap_top_features %}
+      <ul class="list-disc list-inside text-gray-800 dark:text-gray-300">
+        {% for feat, val in shap_top_features %}  this is for main.py
+          <li>{{ feat }}: {{ '%.4f' % val }}</li>      right now testing temp_main.py
+        {% endfor %}
+
+      </ul>
+    {% endif %}
+  </div>
+</div>
+
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', !mobileMenu.classList.contains('hidden'));
+      });
+    }
+
+    // Modal toggle function
+    function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.toggle('active');
+        document.body.style.overflow = modal.classList.contains('active') ? 'hidden' : '';
+      }
+    }
+
+    // Voice input with fallbacks
+    const startSpeechRecognitionButton = document.getElementById('startSpeechRecognition');
+    const transcriptionDiv = document.getElementById('transcription');
+    const recognitionErrorDiv = document.getElementById('recognitionError');
+
+    if (startSpeechRecognitionButton && transcriptionDiv) {
+      startSpeechRecognitionButton.addEventListener('click', () => {
+        recognitionErrorDiv.classList.add('hidden');
+        
+        if ('webkitSpeechRecognition' in window) {
+          const recognition = new webkitSpeechRecognition();
+          recognition.lang = 'en-US';
+          recognition.interimResults = false;
+          
+          recognition.onstart = () => {
+            startSpeechRecognitionButton.innerHTML = '<i class="fas fa-microphone-slash"></i> Listening...';
+            startSpeechRecognitionButton.classList.add('bg-blue-100', 'dark:bg-blue-900');
+          };
+          
+          recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            transcriptionDiv.textContent = transcript;
+            document.getElementById('symptoms').value = transcript;
+          };
+          
+          recognition.onerror = (event) => {
+            recognitionErrorDiv.textContent = 'Error: ' + event.error;
+            recognitionErrorDiv.classList.remove('hidden');
+          };
+          
+          recognition.onend = () => {
+            startSpeechRecognitionButton.innerHTML = '<i class="fas fa-microphone"></i> Voice Input';
+            startSpeechRecognitionButton.classList.remove('bg-blue-100', 'dark:bg-blue-900');
+          };
+          
+          recognition.start();
+        } else {
+          recognitionErrorDiv.textContent = 'Speech recognition not supported in your browser';
+          recognitionErrorDiv.classList.remove('hidden');
+        }
+      });
+    }
+
+    // Theme management
+    function setTheme(mode) {
+      localStorage.setItem('theme', mode);
+      const root = document.documentElement;
+      const body = document.body;
+      const backgroundOverlay = document.getElementById('background-overlay');
+      const darkModeToggle = document.getElementById('dark-mode-toggle');
+      
+      // Remove all theme classes
+      root.classList.remove('dark');
+      body.classList.remove('dark-mode', 'luxury-mode');
+      backgroundOverlay.classList.remove('bg-light-overlay', 'bg-dark-overlay', 'bg-luxury-overlay');
+      
+      // Set new theme
+      if (mode === 'dark') {
+        root.classList.add('dark');
+        body.classList.add('dark-mode');
+        backgroundOverlay.classList.add('bg-dark-overlay');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      } else if (mode === 'luxury') {
+        body.classList.add('luxury-mode');
+        backgroundOverlay.classList.add('bg-luxury-overlay');
+        darkModeToggle.innerHTML = '<i class="fas fa-gem"></i>';
+      } else {
+        backgroundOverlay.classList.add('bg-light-overlay');
+        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+      }
+    }
+
+    // Load theme on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('dark-mode-toggle');
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      setTheme(savedTheme);
+      
+      // Initialize animations
+      document.querySelectorAll('.animate-fadeIn').forEach(el => {
+        el.style.animation = 'fadeIn 0.5s ease-out forwards';
+      });
+    });
+
+    // Close modals when clicking outside
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          toggleModal(modal.id);
+        }
+      });
+    });
+
+    // Escape key closes modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal.active').forEach(modal => {
+          toggleModal(modal.id);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Contact Health Center for support, questions, or feedback about our AI-powered healthcare services">
+  <title>Contact Us | Health Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #6c757d;
+      --light-bg: #f8f9fa;
+      --dark-bg: #1c1c1c;
+      --luxury-bg: linear-gradient(135deg, #434343 0%, #000000 100%);
+      --text-light: #333;
+      --text-dark: #f1f1f1;
+      --text-luxury: #ffd700;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-light);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    body.dark-mode {
+      background-color: var(--dark-bg);
+      color: var(--text-dark);
+    }
+    
+    body.luxury-mode {
+      background: var(--luxury-bg);
+      color: var(--text-luxury);
+    }
+    
+    .contact-container {
+      max-width: 50rem;
+      margin: 0 auto;
+      padding: 4rem 1.25rem;
+    }
+    
+    h1 {
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+    
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5rem;
+      height: 3px;
+      background-color: var(--primary-color);
+    }
+    
+    h4 {
+      color: var(--primary-color);
+      margin-top: 2rem;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 0.25rem;
+    }
+    
+    h4::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 2rem;
+      height: 2px;
+      background-color: var(--primary-color);
+    }
+    
+    p {
+      margin-bottom: 1rem;
+    }
+    
+    strong {
+      font-weight: 600;
+    }
+    
+    .contact-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .contact-card {
+      flex: 1 1 300px;
+      background: rgba(0, 123, 255, 0.1);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .dark-mode .contact-card {
+      background: rgba(0, 123, 255, 0.2);
+    }
+    
+    .luxury-mode .contact-card {
+      background: rgba(255, 215, 0, 0.1);
+      border-left-color: var(--text-luxury);
+    }
+    
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .theme-toggle .btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 0;
+    }
+    
+    @media (max-width: 576px) {
+      .contact-container {
+        padding: 3rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="theme-toggle">
+  <button class="btn btn-light" onclick="setTheme('light')" aria-label="Light mode">☀️</button>
+  <button class="btn btn-dark" onclick="setTheme('dark')" aria-label="Dark mode">🌙</button>
+  <button class="btn btn-warning" onclick="setTheme('luxury')" aria-label="Luxury mode">💎</button>
+</div>
+
+<main class="contact-container">
+  <h1 class="display-5 fw-bold">Contact Us</h1>
+
+  <p class="text-center lead">Have questions or need help? We'd love to hear from you!</p>
+
+  <div class="contact-info">
+    <div class="contact-card">
+      <h4>Customer Support</h4>
+      <p>Our team is ready to assist with your queries—technical help, feedback, or anything else you need.</p>
+      
+      <h4>Email</h4>
+      <p><strong>nikhilkaul03@gmail.com</strong></p>
+      
+      <h4>Phone</h4>
+      <p><strong>8368218787</strong></p>
+    </div>
+    
+    <div class="contact-card">
+      <h4>Development Team</h4>
+      <p><strong>Nikhil Kaul</strong> - Lead Developer</p>
+      <p><strong>Pulkit</strong> - Backend Engineer</p>
+      <p><strong>Raghav Mishra</strong> - Machine Learning</p>
+      <p><strong>Gautam Pandey</strong> - Frontend Developer</p>
+    </div>
+  </div>
+
+  <h4>Stay Connected</h4>
+  <p>Follow us on social media to stay updated with health tips and platform news.</p>
+
+  <h4>Location</h4>
+  <p>Ghaziabad, UP, India</p>
+</main>
+
+<script>
+  function setTheme(mode) {
+    localStorage.setItem('theme', mode);
+    document.documentElement.classList.remove('dark', 'luxury');
+    document.body.classList.remove('dark-mode', 'luxury-mode');
+    if (mode === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark-mode');
+    } else if (mode === 'luxury') {
+      document.documentElement.classList.add('luxury');
+      document.body.classList.add('luxury-mode');
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" defer></script>
+</body>
+</html>

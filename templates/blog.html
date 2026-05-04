@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Learn how we built a symptom-based diagnosis web app using Flask and Machine Learning">
+  <title>Blog | Health Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --primary-light: #93c5fd;
+      --secondary-color: #6b7280;
+      --light-bg: #f8fafc;
+      --dark-bg: #0f172a;
+      --luxury-bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+      --text-light: #1e293b;
+      --text-dark: #f1f5f9;
+      --text-luxury: #fef08a;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-light);
+      transition: all 0.3s ease;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    body.dark-mode {
+      background-color: var(--dark-bg);
+      color: var(--text-dark);
+    }
+    
+    body.luxury-mode {
+      background: var(--luxury-bg);
+      color: var(--text-luxury);
+    }
+    
+    .blog-container {
+      max-width: 64rem;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+    
+    .blog-article {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .blog-article:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-mode .blog-article {
+      background: rgba(15, 23, 42, 0.9);
+    }
+    
+    .luxury-mode .blog-article {
+      background: rgba(15, 23, 42, 0.9);
+    }
+    
+    .blog-title {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      background: linear-gradient(90deg, var(--primary-color), #4f46e5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.2;
+    }
+    
+    .luxury-mode .blog-title {
+      background: linear-gradient(90deg, var(--text-luxury), #f59e0b);
+    }
+    
+    .section-title {
+      position: relative;
+      padding-left: 1.5rem;
+      margin: 2.5rem 0 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    
+    .luxury-mode .section-title {
+      color: var(--text-luxury);
+    }
+    
+    .section-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 80%;
+      width: 5px;
+      background: var(--primary-color);
+      border-radius: 3px;
+    }
+    
+    .luxury-mode .section-title::before {
+      background: var(--text-luxury);
+    }
+    
+    .content-list {
+      padding-left: 1.5rem;
+    }
+    
+    .content-list li {
+      margin-bottom: 1rem;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    
+    .content-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+    
+    .luxury-mode .content-list li::before {
+      color: var(--text-luxury);
+    }
+    
+    .content-list strong {
+      color: var(--primary-color);
+    }
+    
+    .luxury-mode .content-list strong {
+      color: var(--text-luxury);
+    }
+    
+    .theme-toggle {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 1000;
+      display: flex;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.5rem;
+      border-radius: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-mode .theme-toggle {
+      background: rgba(15, 23, 42, 0.9);
+    }
+    
+    .luxury-mode .theme-toggle {
+      background: rgba(15, 23, 42, 0.9);
+    }
+    
+    .theme-toggle .btn {
+      width: 2.75rem;
+      height: 2.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .theme-toggle .btn:hover {
+      transform: scale(1.1);
+    }
+    
+    @media (max-width: 768px) {
+      .blog-container {
+        padding: 3rem 1rem;
+      }
+      
+      .blog-article {
+        padding: 2rem;
+      }
+      
+      .blog-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="theme-toggle">
+  <button class="btn btn-light" onclick="setTheme('light')" aria-label="Light mode"><i class="fas fa-sun"></i></button>
+  <button class="btn btn-dark" onclick="setTheme('dark')" aria-label="Dark mode"><i class="fas fa-moon"></i></button>
+  <button class="btn btn-warning" onclick="setTheme('luxury')" aria-label="Luxury mode"><i class="fas fa-gem"></i></button>
+</div>
+
+<main class="blog-container">
+  <article class="blog-article">
+    <h1 class="blog-title">Building a Symptom-Based Diagnosis Web App with Flask & ML</h1>
+
+    <p>In the digital age, remote healthcare is more essential than ever. That's why we built a symptom-based disease diagnosis platform using Flask and Machine Learning.</p>
+
+    <h3 class="section-title">The Problem</h3>
+    <p>People often want quick, accurate health info—but overlapping symptoms make it difficult. We aimed to solve this with AI.</p>
+
+    <h3 class="section-title">The Solution</h3>
+    <ol class="content-list">
+      <li><strong>Symptom Input:</strong> Easy-to-use interface for users to type symptoms.</li>
+      <li><strong>ML Model:</strong> A Decision Tree Classifier predicts diseases from those symptoms.</li>
+      <li><strong>Prediction Output:</strong> Users instantly see possible illnesses.</li>
+      <li><strong>Educational Insights:</strong> Detailed information about disease, precautions, meds, diet, and exercise.</li>
+    </ol>
+
+    <h3 class="section-title">Key Features</h3>
+    <ul class="content-list">
+      <li><strong>Clean UI:</strong> Simple, friendly interface.</li>
+      <li><strong>Accurate Predictions:</strong> Powered by trained ML models.</li>
+      <li><strong>All-in-One Health Info:</strong> Disease details, safety tips, and lifestyle guidance included.</li>
+      <li><strong>Learning Hub:</strong> Blogs that help users stay informed.</li>
+    </ul>
+
+    <h3 class="section-title">Conclusion</h3>
+    <p>This project blends AI with healthcare, helping users make better decisions. It's just the beginning of smarter, more connected medical tools for everyone.</p>
+  </article>
+</main>
+
+<script>
+  function setTheme(mode) {
+    localStorage.setItem('theme', mode);
+    document.documentElement.classList.remove('dark-mode', 'luxury-mode');
+    document.body.classList.remove('dark-mode', 'luxury-mode');
+    
+    if (mode === 'dark') {
+      document.documentElement.classList.add('dark-mode');
+      document.body.classList.add('dark-mode');
+    } else if (mode === 'luxury') {
+      document.documentElement.classList.add('luxury-mode');
+      document.body.classList.add('luxury-mode');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

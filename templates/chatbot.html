@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chat with our AI doctor assistant for health-related questions and advice">
+  <title>Doctor AI Chatbot | Health Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --secondary-color: #6b7280;
+      --user-message-bg: #e3f2fd;
+      --ai-message-bg: #f5f5f5;
+      --dark-user-message-bg: #1e3a8a;
+      --dark-ai-message-bg: #1f2937;
+      --luxury-user-message-bg: #1a237e;
+      --luxury-ai-message-bg: #263238;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+      color: #111827;
+      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+    }
+    
+    body.dark-mode {
+      background-color: #121212;
+      color: #e5e7eb;
+    }
+    
+    body.luxury-mode {
+      background: linear-gradient(135deg, #232526 0%, #414345 100%);
+      color: #ffd700;
+    }
+    
+    .chat-container {
+      max-height: 70vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-color) #f1f1f1;
+    }
+    
+    .chat-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .chat-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    .chat-container::-webkit-scrollbar-thumb {
+      background-color: var(--primary-color);
+      border-radius: 10px;
+    }
+    
+    .user-message {
+      background-color: var(--user-message-bg);
+      border-radius: 1rem 1rem 0 1rem;
+    }
+    
+    .ai-message {
+      background-color: var(--ai-message-bg);
+      border-radius: 1rem 1rem 1rem 0;
+    }
+    
+    .dark-mode .user-message {
+      background-color: var(--dark-user-message-bg);
+      color: white;
+    }
+    
+    .dark-mode .ai-message {
+      background-color: var(--dark-ai-message-bg);
+      color: white;
+    }
+    
+    .luxury-mode .user-message {
+      background-color: var(--luxury-user-message-bg);
+      color: white;
+    }
+    
+    .luxury-mode .ai-message {
+      background-color: var(--luxury-ai-message-bg);
+      color: #ffd700;
+    }
+    
+    .typing-indicator {
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      margin: 0 2px;
+      background-color: currentColor;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: typingAnimation 1.4s infinite ease-in-out;
+    }
+    
+    .typing-dot:nth-child(1) {
+      animation-delay: 0s;
+    }
+    
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    @keyframes typingAnimation {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+    
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .theme-toggle .btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 0;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+  <div class="theme-toggle">
+    <button class="btn btn-light" onclick="setTheme('light')" aria-label="Light mode">☀️</button>
+    <button class="btn btn-dark" onclick="setTheme('dark')" aria-label="Dark mode">🌙</button>
+    <button class="btn btn-warning" onclick="setTheme('luxury')" aria-label="Luxury mode">💎</button>
+  </div>
+
+  <div class="container mx-auto p-4 max-w-3xl">
+    <h1 class="text-3xl font-bold text-center mb-6 text-blue-600 dark:text-blue-400">Doctor AI Chatbot</h1>
+    
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+      <!-- Chat messages container -->
+      <div id="chat-messages" class="chat-container mb-4 space-y-2 p-2">
+        <!-- Initial greeting -->
+        <div class="ai-message p-3 max-w-xs md:max-w-md mr-auto">
+          Hello! I'm Doctor AI. How can I help you with your health concerns today?
+        </div>
+      </div>
+      
+      <!-- Input form -->
+      <form id="chat-form" class="flex gap-2">
+        <input type="text" id="user-input" 
+               class="flex-grow p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
+               placeholder="Type your health question..." required
+               aria-label="Type your health question">
+        <button type="submit" 
+                class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition"
+                aria-label="Send message">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+    
+    <div class="mt-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+      <p>Note: This is an AI assistant and not a substitute for professional medical advice.</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set initial theme
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      setTheme(savedTheme);
+      
+      // Focus input on load
+      document.getElementById('user-input').focus();
+    });
+
+    document.getElementById('chat-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const userInput = document.getElementById('user-input');
+      const message = userInput.value.trim();
+      
+      if (!message) return;
+      
+      // Add user message to chat
+      addMessage('user', message);
+      userInput.value = '';
+      
+      try {
+          // Show loading indicator
+          const loadingId = 'loading-' + Date.now();
+          addMessage('ai', '<div class="typing-indicator">Doctor AI is thinking...</div>', true, loadingId);
+          
+          const response = await fetch('/ask_doctor', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  message: message,
+                  symptoms: document.getElementById("symptoms")?.value || "",
+                  prediction: document.querySelector("h2")?.textContent?.replace("Predicted Disease: ", "") || ""
+              }),
+              timeout: 15000 // 15 second timeout
+          });
+          
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Remove loading message
+          const loadingElement = document.getElementById(loadingId);
+          if (loadingElement) loadingElement.remove();
+          
+          if (data.error) {
+              addMessage('ai', `Error: ${data.error}`);
+          } else if (data.reply) {
+              addMessage('ai', data.reply);
+          } else {
+              addMessage('ai', "Sorry, I didn't get a proper response.");
+          }
+          
+      } catch (error) {
+          console.error('Error:', error);
+          const messages = document.getElementById('chat-messages');
+          const lastMessage = messages.lastChild;
+          
+          // Remove loading message if exists
+          if (lastMessage && lastMessage.id && lastMessage.id.startsWith('loading-')) {
+              lastMessage.remove();
+          }
+          
+          addMessage('ai', `Sorry, I encountered an error: ${error.message}`);
+      }
+  });
+  
+  // Improved addMessage function
+  function addMessage(sender, text, isTemp = false, id = '') {
+    const messages = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    
+    if (id) messageDiv.id = id;
+    
+    // ✅ CORRECT: Add base classes first
+    messageDiv.classList.add('p-3', 'rounded-lg', 'max-w-xs', 'md:max-w-md');
+    
+    // ✅ CORRECT: Add sender-specific classes separately
+    if (sender === 'user') {
+      messageDiv.classList.add('user-message', 'ml-auto'); // Separate classes
+    } else {
+      messageDiv.classList.add('ai-message', 'mr-auto'); // Separate classes
+    }
+    
+    if (isTemp) {
+      messageDiv.classList.add('text-gray-500', 'italic');
+    }
+    
+    messageDiv.innerHTML = text; // Using innerHTML to allow basic formatting
+    messages.appendChild(messageDiv);
+    messages.scrollTop = messages.scrollHeight;
+  }
+    
+    function setTheme(mode) {
+      localStorage.setItem('theme', mode);
+      document.documentElement.classList.remove('dark-mode', 'luxury-mode');
+      document.body.classList.remove('dark-mode', 'luxury-mode');
+      
+      if (mode === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+        document.body.classList.add('dark-mode');
+      } else if (mode === 'luxury') {
+        document.documentElement.classList.add('luxury-mode');
+        document.body.classList.add('luxury-mode');
+      }
+    }
+  </script>
+</body>
+</html>
